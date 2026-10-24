@@ -1,0 +1,94 @@
+{
+  "name": "code-cemetery",
+  "version": "1.1.0",
+  "description": "A local desktop home for unfinished projects",
+  "author": "Code Cemetery contributors",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "main": "build-desktop/main.cjs",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "concurrently -k \"tsx watch server/index.ts\" \"vite --host 127.0.0.1\"",
+    "build": "tsc --noEmit && vite build",
+    "start": "tsx server/index.ts --production",
+    "test": "tsx --test tests/*.test.ts",
+    "check": "tsc --noEmit",
+    "build:desktop": "npm run build && node scripts/build-desktop.mjs",
+    "desktop": "npm run build:desktop && node scripts/launch-desktop.mjs",
+    "dist:desktop": "npm run build:desktop && electron-builder --win nsis zip --x64 --publish never"
+  },
+  "build": {
+    "appId": "org.codecemetery.desktop",
+    "productName": "Code Cemetery",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "build-desktop/**/*",
+      "LICENSE",
+      "package.json",
+      "!node_modules/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "node_modules/dugite/git",
+        "to": "git",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "docs/DESKTOP.md",
+        "to": "DESKTOP.md"
+      },
+      {
+        "from": "docs/THIRD_PARTY.md",
+        "to": "THIRD_PARTY.md"
+      }
+    ],
+    "asar": true,
+    "npmRebuild": false,
+    "win": {
+      "icon": "build-desktop/icon.ico",
+      "executableName": "Code Cemetery",
+      "signExecutable": false,
+      "artifactName": "Code-Cemetery-${version}-Windows-${arch}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": "always",
+      "shortcutName": "Code Cemetery",
+      "artifactName": "Code-Cemetery-${version}-Setup-${arch}.${ext}"
+    },
+    "publish": null
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "lucide-react": "^0.468.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@resvg/resvg-js": "2.6.2",
+    "@types/express": "^5.0.0",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "concurrently": "^9.2.0",
+    "dugite": "3.3.1",
+    "electron": "45.0.0",
+    "electron-builder": "26.18.0",
+    "esbuild": "0.28.2",
+    "prettier": "^3.9.10",
+    "tsx": "^4.20.0",
+    "typescript": "~5.9.2",
+    "vite": "^7.1.0"
+  }
+}

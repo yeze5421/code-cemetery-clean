@@ -1,0 +1,7 @@
+node_modules
+dist
+build-desktop
+release
+.data
+artifacts
+package-lock.json
