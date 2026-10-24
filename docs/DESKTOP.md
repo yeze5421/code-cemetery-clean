@@ -1,27 +1,35 @@
-# 代码墓地桌面版 / Code Cemetery Desktop
+# Code Cemetery Desktop
 
-## 普通用户
+## Install and run
 
-Windows 10/11 64 位：运行 `Code-Cemetery-版本号-Setup-x64.exe` 安装，之后双击桌面上的 **Code Cemetery**。也可以解压 Windows ZIP，双击解压目录里的 `Code Cemetery.exe`。请完整解压并保留旁边的 resources 等目录。
+Supported release: Windows 10/11, 64-bit.
 
-桌面发行包自带 Electron/Node.js 运行环境和 Git，无需单独安装 Node.js、Git，也不用打开浏览器、输入网址或保留命令行窗口。
+Run `Code-Cemetery-Windows-Setup-x64.exe` to install, then open **Code Cemetery** from the desktop shortcut. Alternatively, fully extract `Code-Cemetery-Windows-x64.zip` and open `Code Cemetery.exe`. Keep the accompanying runtime and `resources` folders.
 
-- 本地项目：点击“发现项目” → “本地目录” → “选择文件夹” → “开始扫描”。只识别具有 `.git` 的仓库，最多查找 5 层子目录；普通代码文件夹暂不识别。
-- GitHub：选择“GitHub 仓库”，输入用户名。公开仓库不需要登录；自己的私有仓库可在“访问私有仓库”中填写只读访问令牌，再扫描同一个账号的用户名。
-- 导出：打开“年度祭典”，生成预览后点击“保存到电脑”，选择 PNG 保存位置。
-- 语言：右上角“中 / EN”切换。
+The desktop release includes Electron, Node.js, and Git. End users do not need to install those tools, open a browser, enter an address, or keep a terminal running.
 
-本地扫描、编辑和 PNG 导出可离线使用；GitHub 扫描需要网络。应用只读取 Git 信息，不修改、删除或上传原项目代码。
+## Find your projects
 
-项目与设置保存在当前系统账号的应用数据目录 `Code Cemetery/state.json`；GitHub 令牌单独由系统加密保存为 `github-token.bin`，不进入项目记录或导出图片。Windows 使用系统提供的 DPAPI 加密；同一登录账号下的其他程序仍可能有能力解密，请保护自己的系统账号。
+- **Local projects:** choose **Discover → Local folder → Choose folder → Start scan**. The app looks for repositories containing `.git`, up to five levels below the chosen folder. Plain code folders without Git records are not detected yet.
+- **GitHub:** choose **GitHub repositories** and enter a username. Public repositories need no login. To read your own private repositories, expand **Private repositories (optional)**, save a read-only access token, and scan the same account's username.
+- **Posters:** open **Year in review**, create a preview, and choose **Save to computer**. A native Save dialog lets you select a PNG destination.
+- **Language:** use the language switch in the upper-right corner. Existing custom writing is preserved.
 
-安装包和源码打包使用明确的文件范围，不包含开发电脑的 `.data/`、`.env`、截图或真实项目记录。新用户首次打开看到的是虚构示例。桌面版与旧版 Web 服务的数据分开保存，需要在桌面版重新选择项目目录扫描。旧版记录仍留在原位置。
+Local scanning, editing, epitaph generation, and poster export work offline. GitHub scans require internet access. The app reads Git records and does not modify or upload the original project files.
 
-当前 Windows 构建没有商业代码签名证书。公开发布前可由维护者使用自己的证书签名；不要建议用户关闭系统安全保护。macOS/Linux 尚未制作或验证发行包。
+## Data and credentials
 
-## 开发和构建
+Project records and settings are saved as `state.json` in the current user's operating-system application-data directory for Code Cemetery. Optional GitHub tokens are stored separately as `github-token.bin` using operating-system encryption. They are not included in project records or exported pictures.
 
-开发机器安装 Node.js 24；安装依赖时需要联网下载 Electron 和 dugite 内置 Git。GitHub 受网络限制时需配置开发机器可用的标准代理；不要在源码中填写代理凭据。
+On Windows, token encryption uses DPAPI. Other software running under the same signed-in Windows account may still be able to decrypt those credentials; the encrypted file is not a substitute for protecting your system account.
+
+The desktop app and optional Web service use separate data directories. Scan your project folders again to bring projects into the desktop app. The original Web records remain in `.data/state.json`.
+
+Release packages exclude the development machine's real project records, credentials, screenshots, and testing output. New installations start with clearly marked fictional examples.
+
+## Build
+
+Contributors need Node.js 24 and internet access for the initial dependency installation. The package manager downloads Electron and dugite's embedded Git distribution from their official upstream releases.
 
 ```sh
 npm ci --include=dev
@@ -29,12 +37,16 @@ npm run desktop
 npm run dist:desktop
 ```
 
-如果包管理器跳过了安装脚本，先运行 `npm rebuild electron dugite`。输出在 `release/`：Windows 安装包、免安装 ZIP 和 `win-unpacked/` 应用目录。不要将整个开发目录当作发行包。
+If dependency installation scripts were skipped, run `npm rebuild electron dugite`.
 
-桌面进程从本地文件加载界面，数据操作走受限 IPC，不启动 HTTP 监听端口。界面使用隔离上下文和沙箱；文件选择、PNG 保存、令牌加密与 Git 执行均在主进程完成。原 Web 版保留用于开发与兼容。
+Build outputs appear in `release/`: the Windows installer, portable ZIP, and unpacked application directory. Upload the installer, ZIP, and SHA-256 checksums as release assets, keeping the stable filenames used by the README download links. Do not upload the whole development directory.
 
-## English
+The current release is unsigned. Maintainers can sign future builds with their own code-signing certificate. macOS and Linux releases have not been built or tested.
 
-Run the Windows x64 Setup executable, or fully extract the Windows ZIP and open `Code Cemetery.exe`. No Node.js, Git, browser, terminal or server setup is required for end users. Use **Discover → Local folder → Choose folder** to scan Git repositories. Enter your GitHub username for public repositories; optionally save a read-only access token for your own private repositories. Posters are saved through a native Save dialog.
+## Runtime boundary
 
-Project records stay in the current user's application-data directory. Tokens use operating-system encryption and never appear in posters or project records. Local features work offline. Only GitHub scans require internet access. This build is unsigned; macOS/Linux distributions have not been tested.
+The main process loads the interface from local files and does not start an HTTP listener. Data access goes through `desktop/contracts.ts`.
+
+The renderer uses context isolation, sandboxing, and disabled Node integration. The main process validates the sender window, frame, entry URL, and inputs. Native dialogs handle folder selection and PNG destinations. Git execution, credential encryption, and persistence stay in the main process.
+
+See [ARCHITECTURE.md](ARCHITECTURE.md) and [THIRD_PARTY.md](THIRD_PARTY.md).

@@ -1,107 +1,107 @@
-# 代码墓地 · Code Cemetery
+# Code Cemetery
 
-给那些差一点改变世界的项目，留一块体面的墓碑。
+Turn dormant local and GitHub projects into funny tombstones and shareable yearbook posters on your Windows desktop.
 
-一个在自己电脑上运行的项目纪念馆：扫描本地 Git 仓库与 GitHub 仓库，找出沉寂的项目，为它们写下好笑又有点扎心的墓志铭，再把这一年的项目坟场导出为 PNG 长图。
+**[Download for Windows](https://github.com/yeze5421/code-cemetery-clean/releases/latest/download/Code-Cemetery-Windows-Setup-x64.exe)** · [Portable ZIP](https://github.com/yeze5421/code-cemetery-clean/releases/latest/download/Code-Cemetery-Windows-x64.zip) · [All releases](https://github.com/yeze5421/code-cemetery-clean/releases)
 
-## 桌面版：普通用户使用
+![A short walkthrough of Code Cemetery using fictional demo projects](docs/media/code-cemetery-demo.gif)
 
-Windows 10/11 64 位用户可使用桌面发行包：运行 `Code-Cemetery-版本号-Setup-x64.exe` 安装，或者完整解压 Windows ZIP 后双击 `Code Cemetery.exe`。发行包自带运行环境与 Git，无需另外安装 Node.js、Git、浏览器或配置本地服务。
+**Windows 10/11, 64-bit.** The desktop download includes its runtime and Git. No Node.js installation, terminal, browser setup, or AI API key is needed.
 
-在独立桌面窗口中点击“发现项目”，用“选择文件夹”寻找本地 Git 仓库，或填写 GitHub 用户名扫描公开仓库；自己的私有仓库可在界面中保存只读访问令牌。年度 PNG 通过系统“另存为”窗口保存。中英文切换、插件、墓碑编辑和本地数据保存均保留。
+## Give unfinished ideas a home
 
-开发者构建桌面版：`npm ci --include=dev` → `npm run desktop`；制作 Windows 安装包和 ZIP：`npm run dist:desktop`，输出到 `release/`。详细说明见 [桌面使用与构建](docs/DESKTOP.md)。
+- **Discover forgotten projects.** Scan a folder of local Git repositories or enter a GitHub username to find public repositories.
+- **Give each project a tombstone.** Preserve its dates, commit count, and language, then add a funny, gentle, or poetic epitaph.
+- **Make a yearbook.** Export a 1080px PNG poster of the projects laid to rest in a selected year.
+- **Keep the last word.** Edit epitaphs, leave flowers, change the dormancy threshold, or revive a project anytime.
+- **Use either language.** Switch between English and Simplified Chinese. Your own writing stays as you wrote it.
+- **Extend the app.** Sources, dormancy rules, epitaph writers, and exporters have separate plugin contracts.
 
-## Web 开发与兼容模式
+Dates and commit counts come from repository records. Epitaphs and causes of death are playful fiction, not factual claims about why a project stopped.
 
-这是在本机运行的 Web 应用：React + TypeScript 提供界面，Node.js + Express 负责扫描和保存数据，Vite 负责构建，浏览器 Canvas 生成 PNG。数据保存在本地 JSON 文件中，无需数据库、Python、Docker 或 AI 服务。
+## Start in a minute
 
-下载源码后，先安装 **Node.js 22.12+（推荐 Node.js 24，包含 npm）**；本地仓库扫描还需要 **Git**，并确保它在 PATH 中可用。使用现代浏览器打开界面。目前已在 Windows 验证；macOS/Linux 可使用以下 npm 命令，但尚未做系统实测。
+1. Download and run the **Windows installer**, then open **Code Cemetery** from your desktop. For the portable version, fully extract the ZIP and open `Code Cemetery.exe` while keeping its accompanying folders.
+2. Select **Discover → Local folder → Choose folder**, choose where you keep your projects, and start the scan. The app finds Git repositories up to five directory levels deep. Folders without Git history are not detected yet.
+3. Or select **GitHub repositories**, enter a username, and scan. Public repositories need no login. Add a read-only access token under **Private repositories (optional)** to scan your own private repositories, using the same account's username.
+4. Open a tombstone to edit its epitaph, or use **Year in review → Create poster → Save to computer** to save a PNG.
 
-在解压或克隆得到的项目文件夹中打开终端，首次运行：
+The default dormancy threshold is 90 days. Dormancy is a signal, not a verdict: you can change the threshold or manually revive a project. Incomplete scans report warnings and retain the projects successfully read.
+
+The GIF above uses fictional demo projects. The Windows build is currently unsigned; macOS and Linux downloads are not available.
+
+## Your data stays on your computer
+
+Local scanning, editing, epitaph generation, and poster export work offline. GitHub scans contact the official GitHub API. The app reads repository information; it does not modify, delete, or upload your source code.
+
+- Desktop project records and settings are stored in your operating system's application-data directory.
+- Optional GitHub tokens are stored separately with operating-system encryption. They are never included in project records or posters.
+- There is no analytics service, AI service, cloud account, or hosted database in the app.
+- Posters contain project names, the cemetery owner's display name, dates, counts, and your writing. Review those before sharing.
+
+Downloads and SHA-256 checksums are available on the [release page](https://github.com/yeze5421/code-cemetery-clean/releases/latest).
+
+## Build from source
+
+These steps are for contributors. End users can use the Windows download above.
+
+Install Node.js 24, then run:
 
 ```sh
 npm ci --include=dev
-npm run build
-npm start
+npm run desktop
 ```
 
-打开 <http://127.0.0.1:4317>。程序只监听本机回环地址，无需部署到云端。PowerShell 若拦截 `npm.ps1`，可将命令中的 `npm` 改为 `npm.cmd`。
-
-源码/Web 模式也可双击 `start-cemetery.cmd`：它会检查 Node.js，缺少依赖时安装、缺少构建时构建，然后启动。首次安装需要联网下载 npm 依赖；之后本地扫描、编辑和导出可离线使用，GitHub 扫描需要联网。普通用户可使用上方介绍的桌面发行包。
-
-`tsx` 当前同时用于启动服务，位于开发依赖中，因此请保留完整依赖，不要用 `--omit=dev` 安装。源码更新后需重新安装依赖并构建；停止运行可在启动窗口按 Ctrl+C。如提示端口被占用，打开已有服务，或先停止旧实例。
-
-开发模式：
+To build the Windows installer and portable ZIP:
 
 ```sh
+npm run dist:desktop
+```
+
+Outputs go to `release/`. Dependency installation downloads Electron and the bundled Git distribution. If your package manager skips installation scripts, run `npm rebuild electron dugite` first. Keep development dependencies installed: `tsx` is also used by the optional Web service.
+
+Validation:
+
+```sh
+npm test
+npm run check
+npm run build
+```
+
+## Modular architecture
+
+| Plugin | Built-in implementation | Responsibility |
+| --- | --- | --- |
+| Source | `local-git`, `github` | Read repository records into a shared `Project` model |
+| Detector | `dormancy` | Classify inactivity while respecting manual decisions |
+| Epitaph | `epitaph` | Generate editable, deterministic English or Chinese writing |
+| Exporter | `annual-png` | Render selected projects as a PNG yearbook |
+
+The desktop shell communicates through a limited, isolated IPC bridge. It loads local application files and does not start an HTTP server. Repository scanning and credentials stay in the main process; the interface handles presentation and poster drawing.
+
+Plugins are registered at build time. The app does not download and execute arbitrary plugin code from the internet.
+
+Read the [architecture guide](docs/ARCHITECTURE.md), [desktop guide](docs/DESKTOP.md), and [language guide](docs/I18N.md).
+
+## Optional Web development mode
+
+The original local Web mode remains available for development:
+
+```sh
+npm ci --include=dev
 npm run dev
 ```
 
-打开 <http://127.0.0.1:5173>。前端开发服务使用 5173 端口；本地 API 服务使用 4317 端口。
+Open `http://127.0.0.1:5173`; the local API uses port 4317. This mode needs a system Git installation for local scans. For the production Web mode, run `npm run build` followed by `npm start`, then open `http://127.0.0.1:4317`.
 
-GitHub 可以托管源码；本地扫描依赖 Node.js 和 Git 后端，单独部署到 GitHub Pages 不能运行完整功能。
+Optional Web-service credentials can be set in a local `.env` copied from `.env.example`, or through the `GITHUB_TOKEN` environment variable. Existing terminal variables take precedence. Desktop users configure their optional token in the app instead.
 
-## 使用
+Web-mode data is stored in `.data/state.json`. The desktop app uses a separate application-data directory. GitHub Pages alone cannot run the local scanning backend.
 
-1. 首次打开可用演示数据参观墓园。演示项目会明确标记，不会被冒充为扫描结果。
-2. 在扫描入口选择本地目录或 GitHub 用户名。本地扫描读取目录下的 Git 仓库；不删除、修改或提交任何原项目。
-3. 调整沉寂天数与墓志铭语气。默认以 90 天没有提交作为沉寂信号，归档仓库也会进入墓园。沉寂不等于实际废弃，可以手动复活项目。
-4. 打开墓碑查看项目、改写墓志铭或献花。Web 模式记录保存在 `.data/state.json`；桌面版保存在当前系统账号的应用数据目录，详见 [桌面说明](docs/DESKTOP.md)。
-5. 选择年度生成“我的项目坟场”，预览并保存 1080px PNG 长图。年度以最后提交时间的 UTC 年份归类；长图只包含已入土项目。数据过多超过画布限制时，会提示改选具体年度。
-6. 右上角 `中 / EN` 可即时切换中英文，刷新后保持选择。界面、扫描提示、示例项目、新生成的墓志铭与年度长图跟随当前语言；自定义内容保留原文。扩展方式见 [多语言模块](docs/I18N.md)。
+## Repository hygiene
 
-GitHub 的公开仓库可以直接按用户名扫描。要读取自己的私有仓库或提升 API 限额，可在启动前设置环境变量：
+Commit source, tests, documentation, configuration, and the empty `.env.example`. Keep real project records, tokens, screenshots of private projects, dependencies, and build outputs out of Git. The repository's ignore rules cover these generated and local files. Publish desktop binaries as release assets rather than source commits.
 
-```powershell
-$env:GITHUB_TOKEN = '<在本机设置你的令牌>'
-npm.cmd run dev
-```
+## License
 
-也可以把 `.env.example` 复制为项目根目录的 `.env`，在本机填写 `GITHUB_TOKEN` 后启动。服务启动时会通过 Node 的 `process.loadEnvFile()` 自动读取 `.env`；已存在的终端环境变量优先。`.env` 被 Git 忽略，请勿提交令牌。
-
-令牌仅在本地服务中使用，不进入浏览器或项目记录。请只授予读取目标仓库所需的权限。GitHub 账号的可见范围、网络失败和 API 限额会影响扫描结果，界面会显示扫描警告。
-
-## 可插拔架构
-
-四类插件通过接口协作，界面不直接执行 Git 或请求 GitHub：
-
-| 类别     | 默认插件              | 职责                                       |
-| -------- | --------------------- | ------------------------------------------ |
-| Source   | `local-git`、`github` | 将不同来源转换为统一 Project               |
-| Detector | `dormancy`            | 根据归档状态、提交时间与手动标记判定状态   |
-| Epitaph  | `epitaph`             | 根据真实项目数据生成可编辑的中英文纪念文案 |
-| Exporter | `annual-png`          | 将指定年度的已入土项目渲染为 PNG           |
-
-墓志铭使用本地确定性模板，不需要 AI 服务、API Key 或付费模型。日期、提交数来自源数据；“死因”是幽默文案，不是对真实废弃原因的事实判断。未知的提交数会保留为未知。
-
-详见 [架构与扩展指南](docs/ARCHITECTURE.md)。
-
-## 验证
-
-```powershell
-npm.cmd test
-npm.cmd run check
-npm.cmd run build
-```
-
-测试覆盖领域规则、数据合并、扫描与导出筛选等边界。PNG 在浏览器 Canvas 中生成，导出布局按文字实际宽度和高度排版，避免把长墓志铭裁掉。
-
-## 数据与边界
-
-- `.data/`、`.env` 及其变体（保留空白 `.env.example`）、`.npmrc`、`artifacts/`、构建输出和依赖目录默认被 Git 忽略。
-- 本地扫描围绕用户选择的目录进行，跳过依赖、系统目录和符号链接；扫描深度与数量有限制，部分完成会报告警告。
-- GitHub 扫描读取当前凭据可访问的仓库，不会修改、归档或删除远程项目。
-- 本地的出生日期、最后提交日期和提交数取自当前 `HEAD` 可达的历史，不汇总其他分支的独有提交。
-- GitHub 的出生日期使用仓库的 `created_at`，不等同于首次提交；最后提交和提交数来自默认分支。读取历史失败时，提交数为未知、沉寂日期暂用 `pushed_at`（无推送记录时使用创建日期），并显示警告，此时废弃判断只供参考。
-- 分享长图包含墓园主人名称、项目名称、语言、日期、提交数和文案，不包含本地路径、令牌或源代码。公开分享前请检查主人名称、项目名称和自定义文案是否适合公开。
-
-## 发布源码前
-
-运行后的整个工作目录不适合直接上传：`.data/state.json` 可能含真实项目名称、绝对路径、仓库地址、自定义文案和墓园主人名称；`artifacts/` 可能含截图、导出图与测试记录；`.env` / `.npmrc` 可能含凭据。`.gitignore` 只影响 Git 对未跟踪文件的处理，不会替手工压缩包过滤文件，也不会移除已经提交的内容。
-
-发布源码时包含 `src/`、`server/`、`desktop/`、`scripts/`、`public/`、`tests/`、`docs/`、包清单与锁文件、构建配置、启动脚本、README、LICENSE、忽略规则和无凭据的 `.env.example`。提交前检查 `git status --short` 与 `git diff --cached`。截图和示例长图请使用虚构演示数据；真实项目名称和自定义文案也可能泄露信息。
-
-## 许可证
-
-本项目原创源码采用 [MIT License](LICENSE)。第三方组件保留各自的许可证，参见 [第三方说明](docs/THIRD_PARTY.md)。`package.json` 的 `private: true` 只防止误发到 npm，不决定 GitHub 仓库是否公开。
+Original application code is released under the [MIT License](LICENSE). Bundled third-party components retain their own licenses; see [third-party notices](docs/THIRD_PARTY.md).

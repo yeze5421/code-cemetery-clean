@@ -1,7 +1,7 @@
 {
   "name": "code-cemetery",
   "version": "1.1.0",
-  "description": "A local desktop home for unfinished projects",
+  "description": "Turn dormant local and GitHub projects into funny tombstones and shareable yearbook posters on your Windows desktop.",
   "author": "Code Cemetery contributors",
   "license": "MIT",
   "private": true,
@@ -56,7 +56,7 @@
       "icon": "build-desktop/icon.ico",
       "executableName": "Code Cemetery",
       "signExecutable": false,
-      "artifactName": "Code-Cemetery-${version}-Windows-${arch}.${ext}"
+      "artifactName": "Code-Cemetery-Windows-${arch}.${ext}"
     },
     "nsis": {
       "oneClick": false,
@@ -64,7 +64,7 @@
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": "always",
       "shortcutName": "Code Cemetery",
-      "artifactName": "Code-Cemetery-${version}-Setup-${arch}.${ext}"
+      "artifactName": "Code-Cemetery-Windows-Setup-${arch}.${ext}"
     },
     "publish": null
   },
